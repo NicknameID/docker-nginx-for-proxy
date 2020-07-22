@@ -94,6 +94,17 @@ fi
 if [ $WEBSOCKET ];then
 	web_socket="proxy_http_version 1.1;\nproxy_set_header Upgrade \$http_upgrade;\nproxy_set_header Connection \$connection_upgrade;\n"
 fi
+
+# auth_basic
+if [ $ADMIN_USER ];then
+	if [ $ADMIN_PASSWORD ];then
+		PASS_FILE=/etc/nginx/htpasswd_file
+		htpasswd -b -c $PASS_FILE $ADMIN_USER $ADMIN_PASSWORD
+		TEXT=${TEXT}"auth_basic '请输入用户名和密码';\n auth_basic_user_file $PASS_FILE;\n"
+	fi
+fi
+
+# 转发规则
 for (( i=0; i>-1; i++ ))
 do
 	url=`eval echo '$'"URL_$i"`
